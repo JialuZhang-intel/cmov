@@ -1,4 +1,4 @@
-CFLAGS=-g -Wall -O3
+CFLAGS=-g -Wall -O3 -masm=intel
 LDFLAGS=-g
 
 NO_CMOV_FLAGS= \
