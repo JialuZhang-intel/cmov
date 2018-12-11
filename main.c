@@ -12,21 +12,22 @@ const float PROBS[]   = {0.0f, 0.05f, 0.1f, 0.15f,
                          1.0f};
 
 
-int test_cmov(int const* A, int const n, int const iters);
+int test_cmov_reg(int const* A, int const* B, int const n, int const iters);
+int test_cmov_mem(int const* A, int const* B, int const n, int const iters);
 
-int test_branch(int const* A, int const n, int const iters);
-int test_branch_0(int const* A, int const n, int const iters);
-int test_branch_1(int const* A, int const n, int const iters);
+int test_branch_reg(int const* A, int const* B, int const n, int const iters);
+int test_branch_mem(int const* A, int const* B, int const n, int const iters);
 
 int main()
 {
     int i, j;
-    int A[A_SIZE];
+    int A[A_SIZE], A1[A_SIZE], A2[A_SIZE];
 
     srand(time(NULL));
 
-    printf("#probability;time_branch;time_branch_0;"
-           "time_branch_1;time_cmov\n");
+    printf("#probability;time_branch_reg;time_cmov_reg;"
+           "time_branch_mem;time_cmov_mem\n");
+
     fflush(stdout);
 
 
@@ -38,6 +39,8 @@ int main()
             float const rand_val = rand1 + rand2;
             float const rand_01 = rand_val / (float)RAND_MAX / (float)RAND_MAX;
             A[j] = rand_01 < PROBS[i];
+            A1[j] = j;
+            A2[j] = j;
         }
 
         clock_t before;
@@ -45,23 +48,22 @@ int main()
         sum = sum;
 
         before = clock();
-        sum = test_branch(A, A_SIZE, ITERS);
+        sum = test_branch_reg(A, A, A_SIZE, ITERS);
         printf(";%f", (float)(clock() - before) / (float)CLOCKS_PER_SEC);
         fflush(stdout);
 
         before = clock();
-        sum = test_branch_0(A, A_SIZE, ITERS);
+        sum = test_cmov_reg(A, A, A_SIZE, ITERS);
         printf(";%f", (float)(clock() - before) / (float)CLOCKS_PER_SEC);
         fflush(stdout);
 
         before = clock();
-        sum = test_branch_1(A, A_SIZE, ITERS);
+        sum = test_branch_mem(A, A1, A_SIZE, ITERS);
         printf(";%f", (float)(clock() - before) / (float)CLOCKS_PER_SEC);
         fflush(stdout);
 
-
         before = clock();
-        sum = test_cmov(A, A_SIZE, ITERS);
+        sum = test_cmov_mem(A, A2, A_SIZE, ITERS);
         printf(";%f", (float)(clock() - before) / (float)CLOCKS_PER_SEC);
         fflush(stdout);
 
