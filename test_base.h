@@ -1,3 +1,5 @@
+void check_eq(int expected, int value, const char* msg);
+
 int FUNC_NAME(int const* A, int const* B, int const n, int const iters)
 {
     int i, j;
@@ -6,6 +8,10 @@ int FUNC_NAME(int const* A, int const* B, int const n, int const iters)
     res = 0;
     for(i = 0; i < iters; ++i) {
         for(j = 0; j < n; ++j) {
+            #ifdef CHECK
+                int prev = res;
+            #endif
+
             #ifdef ASM_CMOV_REG
                 asm ("cmp %[A_j], 0\n\t"
                     "cmovne %[res], %[j]"
@@ -27,7 +33,6 @@ int FUNC_NAME(int const* A, int const* B, int const n, int const iters)
                         : done);
                 res = j;
                 done:
-                continue;
             #elif ASM_BRANCH_MEM
                 asm goto ("cmp %[A_j], 0\n\t"
                         "je %l[done]\n\t"
@@ -37,15 +42,18 @@ int FUNC_NAME(int const* A, int const* B, int const n, int const iters)
                         : done);
                 res = B[j];
                 done:
-                continue;
             #else
                 if(A[j]) {
                     res = j;
                 }
             #endif
+
+            #ifdef CHECK
+                check_eq(A[j] ? j : prev, res, __func__);
+            #endif
+            continue;
         }
     }
 
     return res;
 }
-

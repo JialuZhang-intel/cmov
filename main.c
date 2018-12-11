@@ -18,10 +18,17 @@ int test_cmov_mem(int const* A, int const* B, int const n, int const iters);
 int test_branch_reg(int const* A, int const* B, int const n, int const iters);
 int test_branch_mem(int const* A, int const* B, int const n, int const iters);
 
+void check_eq(int expected, int value, const char* msg) {
+    if (expected != value) {
+        printf("Check failed! %s, expected %d, value %d\n", msg, expected, value);
+        fflush(stdout);
+    }
+}
+
 int main()
 {
     int i, j;
-    int A[A_SIZE], A1[A_SIZE], A2[A_SIZE];
+    int A[A_SIZE], A1[A_SIZE];
 
     srand(time(NULL));
 
@@ -40,7 +47,6 @@ int main()
             float const rand_01 = rand_val / (float)RAND_MAX / (float)RAND_MAX;
             A[j] = rand_01 < PROBS[i];
             A1[j] = j;
-            A2[j] = j;
         }
 
         clock_t before;
@@ -48,12 +54,12 @@ int main()
         sum = sum;
 
         before = clock();
-        sum = test_branch_reg(A, A, A_SIZE, ITERS);
+        sum = test_branch_reg(A, A1, A_SIZE, ITERS);
         printf(";%f", (float)(clock() - before) / (float)CLOCKS_PER_SEC);
         fflush(stdout);
 
         before = clock();
-        sum = test_cmov_reg(A, A, A_SIZE, ITERS);
+        sum = test_cmov_reg(A, A1, A_SIZE, ITERS);
         printf(";%f", (float)(clock() - before) / (float)CLOCKS_PER_SEC);
         fflush(stdout);
 
@@ -63,7 +69,7 @@ int main()
         fflush(stdout);
 
         before = clock();
-        sum = test_cmov_mem(A, A2, A_SIZE, ITERS);
+        sum = test_cmov_mem(A, A1, A_SIZE, ITERS);
         printf(";%f", (float)(clock() - before) / (float)CLOCKS_PER_SEC);
         fflush(stdout);
 

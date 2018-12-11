@@ -24,3 +24,18 @@ clean:
 	rm -f *.o
 	rm -f main
 	rm -f *.s
+	rm -f check
+
+CHECK_OBJS=main.o check_cmov.o check_branch.o
+
+check: check_main
+	./check_main
+
+check_main: $(CHECK_OBJS)
+	$(CC) $(CFLAGS) -o $@ $(CHECK_OBJS)
+
+check_cmov.o: test_cmov.c
+	$(CC) $(CFLAGS) -D CHECK -c -o $@ $<
+
+check_branch.o: test_branch.c
+	$(CC) $(CFLAGS) -D CHECK -c -o $@ $<
