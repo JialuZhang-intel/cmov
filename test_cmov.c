@@ -11,3 +11,11 @@
 #undef ASM_CMOV_MEM
 #undef FUNC_NAME
 
+#define FUNC_NAME test_cmov_mem_with_use
+#define ASM_CMOV_MEM 1
+#define WITH_USE
+#include "test_base.h"
+#undef WITH_USE
+#undef ASM_CMOV_MEM
+#undef FUNC_NAME
+

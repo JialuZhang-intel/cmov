@@ -14,9 +14,11 @@ const float PROBS[]   = {0.0f, 0.05f, 0.1f, 0.15f,
 
 int test_cmov_reg(int const* A, int const* B, int const n, int const iters);
 int test_cmov_mem(int const* A, int const* B, int const n, int const iters);
+int test_cmov_mem_with_use(int const* A, int const* B, int const n, int const iters);
 
 int test_branch_reg(int const* A, int const* B, int const n, int const iters);
 int test_branch_mem(int const* A, int const* B, int const n, int const iters);
+int test_branch_mem_with_use(int const* A, int const* B, int const n, int const iters);
 
 void check_eq(int expected, int value, const char* msg) {
     if (expected != value) {
@@ -33,7 +35,8 @@ int main()
     srand(time(NULL));
 
     printf("#probability;time_branch_reg;time_cmov_reg;"
-           "time_branch_mem;time_cmov_mem\n");
+           "time_branch_mem;time_cmov_mem;"
+           "time_branch_mem_with_use;time_cmov_mem_with_use\n");
 
     fflush(stdout);
 
@@ -70,6 +73,16 @@ int main()
 
         before = clock();
         sum = test_cmov_mem(A, A1, A_SIZE, ITERS);
+        printf(";%f", (float)(clock() - before) / (float)CLOCKS_PER_SEC);
+        fflush(stdout);
+
+        before = clock();
+        sum = test_branch_mem_with_use(A, A1, A_SIZE, ITERS);
+        printf(";%f", (float)(clock() - before) / (float)CLOCKS_PER_SEC);
+        fflush(stdout);
+
+        before = clock();
+        sum = test_cmov_mem_with_use(A, A1, A_SIZE, ITERS);
         printf(";%f", (float)(clock() - before) / (float)CLOCKS_PER_SEC);
         fflush(stdout);
 
