@@ -46,6 +46,33 @@ int FUNC_NAME(int const* A, int const* B, int const n, int const iters)
                 res = B[j];
                 done:
 
+            #elif ASM_CMOV_MEM_WITH_USE
+                asm ("cmp %[A_j], 0\n\t"
+                    "cmovne %[res], %[B_j]\n\t"
+                    "imul %[res], %[B_j]\n\t"
+                    "imul %[res], %[B_j]\n\t"
+                    "imul %[res], %[B_j]\n\t"
+                    "imul %[res], %[B_j]"
+                    : [res] "+r"(res)
+                    : [A_j] "m"(A[j]), [B_j] "m"(B[j])
+                    : "cc");
+
+            #elif ASM_BRANCH_MEM_WITH_USE
+                asm goto ("cmp %[A_j], 0\n\t"
+                        "je %l[done]\n\t"
+                        :
+                        : [A_j] "m"(A[j])
+                        : "cc"
+                        : done);
+                res = B[j];
+                done:
+                asm ("imul %[res], %[B_j]\n\t"
+                    "imul %[res], %[B_j]\n\t"
+                    "imul %[res], %[B_j]\n\t"
+                    "imul %[res], %[B_j]"
+                    : [res] "+r"(res)
+                    : [B_j] "m"(B[j]));
+
             #else
                 if(A[j]) {
                     res = j;
@@ -54,12 +81,6 @@ int FUNC_NAME(int const* A, int const* B, int const n, int const iters)
 
             #ifdef CHECK
                 check_eq(A[j] ? j : prev, res, __func__);
-            #endif
-
-            #ifdef WITH_USE
-                asm ("imul %[res], %[B_j]"
-                    : [res] "+r"(res)
-                    : [B_j] "m"(B[j]));
             #endif
 
             continue;

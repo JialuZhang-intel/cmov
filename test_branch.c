@@ -11,11 +11,9 @@
 #undef FUNC_NAME
 
 #define FUNC_NAME test_branch_mem_with_use
-#define ASM_BRANCH_MEM 1
-#define WITH_USE
+#define ASM_BRANCH_MEM_WITH_USE 1
 #include "test_base.h"
-#undef WITH_USE
-#undef ASM_BRANCH_MEM
+#undef ASM_BRANCH_MEM_WITH_USE
 #undef FUNC_NAME
 
 
