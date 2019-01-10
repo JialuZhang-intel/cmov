@@ -15,6 +15,7 @@ plot: out.png
 
 out.png: out.csv
 	./plot.gnuplot
+	./plot2.gnuplot
 
 out.csv: main
 	./main | tee out.csv
