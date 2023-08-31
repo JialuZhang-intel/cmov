@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
             test_type = 3;
             printf("#probability;time_cmov_mem;\n");
         }
-        else if (strcmp(argv[1], "time_branch_mem_with_use") == 0)
+        else if (strcmp(argv[1], "branch_mem_with_use") == 0)
         {
             test_type = 4;
             printf("#probability;time_branch_reg;\n");
